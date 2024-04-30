@@ -83,7 +83,7 @@ class ImagingEdge:
             # yay, a container (sub directory)
             for element2 in dom2.getElementsByTagName('container'):
                 dirname = element2.getElementsByTagName('dc:title')[0].firstChild.nodeValue
-                print('Entering subdir:', element2.attributes['id'].value, dirname)
+                print('Entering subdir:', element2.attributes['id'].value, '-', dirname)
                 self.getDirectoryContent(element2.attributes['id'].value, dirname)
 
             # yay, an image (item)
@@ -113,19 +113,34 @@ class ImagingEdge:
         # fallback file name
         if(not filepath):
             filepath = self.output_dir+'/'+unquote(urlparse(url).path)
-        # skip if exists
-        if(os.path.isfile(filepath)):
-            print('Skip existing file:', filepath)
-            return
         # make dirs
         if(not os.path.isdir(os.path.dirname(filepath))):
             os.makedirs(os.path.dirname(filepath), exist_ok=True)
         # do the download
-        print('Downloading:', url, ' -> ', filepath)
         with requests.get(url, stream=True) as r:
-            with open(filepath, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=8192):
-                    f.write(chunk)
+            if(r.status_code == 200):
+                # get download size
+                length = 0; written = 0
+                if('content-length' in r.headers):
+                    length = int(r.headers['content-length'])
+                # skip if exists and fully downloaded
+                if(os.path.isfile(filepath)
+                and length != 0 and length == os.stat(filepath).st_size):
+                    print('Skip existing file:', filepath)
+                    return
+                # write chunks to file
+                print('Downloading:', url, ' -> ', filepath)
+                with open(filepath, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=16384):
+                        f.write(chunk)
+                        written += len(chunk)
+                # check if everything received or download aborted
+                if(length != written):
+                    # this can happen if the download was aborted
+                    # or if the file was deleted on SD card but the image is still in the camera internal database
+                    print('!! Bytes received do not match advertised content-length:', written, '<->', length)
+            else:
+                print('Unable to download:', r.status_code, url)
 
 def main():
     defaultImgDir = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES) + '/ImagingEdge4Linux'
