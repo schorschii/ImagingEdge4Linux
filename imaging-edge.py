@@ -3,7 +3,7 @@
 from xml.dom import minidom
 from urllib.parse import urlparse, unquote
 from gi.repository import GLib
-import os
+import os, sys
 import requests
 import argparse
 
@@ -12,6 +12,8 @@ __copyright__ = '(c) 2024'
 
 
 class ImagingEdge:
+    VERSION = '0.1'
+
     ROOT_DIR_PUSH = 'PushRoot'
     ROOT_DIR_PULL = 'PhotoRoot'
 
@@ -138,7 +140,7 @@ class ImagingEdge:
                 if(length != written):
                     # this can happen if the download was aborted
                     # or if the file was deleted on SD card but the image is still in the camera internal database
-                    print('!! Bytes received do not match advertised content-length:', written, '<->', length)
+                    print('!! Bytes received do not match advertised content-length:', written, '<>', length)
             else:
                 print('Unable to download:', r.status_code, url)
 
@@ -152,6 +154,10 @@ def main():
     parser.add_argument('--debug', default=False, action='store_true', help='Show debug output')
     parser.add_argument('--version', action='store_true', help='Print version and exit')
     args = parser.parse_args()
+
+    if(args.version):
+        print(ImagingEdge.VERSION)
+        sys.exit()
 
     ie = ImagingEdge(args.address, args.port, args.output_dir, args.debug)
     if(args.debug):
