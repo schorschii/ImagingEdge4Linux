@@ -48,6 +48,26 @@ class ImagingEdge:
         if(self.debug):
             print('Transfer start response:', response.status_code, response.text)
 
+    def endTransfer(self):
+        # exit the "Send to smartphone" mode (only works in push mode)
+        response = requests.post(
+            'http://'+self.address+':'+self.port+'/upnp/control/XPushList',
+            headers = {
+                'SOAPACTION': '"urn:schemas-sony-com:service:XPushList:1#X_TransferEnd"',
+                'Content-Type': 'text/xml; charset="utf-8"',
+            },
+            data = ('<?xml version="1.0" encoding= "UTF-8"?>'
+                +'<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/" s:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">'
+                +'<s:Body>'
+                +'<u:X_TransferEnd xmlns:u="urn:schemas-sony-com:service:XPushList:1">'
+                +'<ErrCode>0</ErrCode>'
+                +'</u:X_TransferEnd>'
+                +'</s:Body>'
+                +'</s:Envelope>')
+        )
+        if(self.debug):
+            print('Transfer end response:', response.status_code, response.text)
+
     # get dir contents
     def getDirectoryContent(self, dir, dirname):
         response = requests.post(
@@ -169,6 +189,7 @@ def main():
     except Exception as e:
         # user selected "Choose images on computer" (= access to all images)
         ie.getDirectoryContent(ie.ROOT_DIR_PULL, ie.ROOT_DIR_PULL)
+    ie.endTransfer()
 
 if(__name__ == '__main__'):
     main()
