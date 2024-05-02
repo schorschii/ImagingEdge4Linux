@@ -14,9 +14,12 @@ No special installation steps are necessary. Just:
 1. Select "Send to Smartphone" in the menu of your Sony camera (**not** "Send to Computer")
 2. Connect your computer to the WiFi access point of the camera
 3. Execute the python script: `python3 imaging-edge.py`. All images will be copied to your computer. Already copied files will be skipped.
+   - Normally, the camera is available at 192.168.122.1:64321, but you can adjust this by the `--address` and `--port` parameter.
+   - By default, the images will be downloaded into your personal images folder. You can adjust this using the `--output-dir` directory.
+   - You can add this script to your autostart with the `--daemon` parameter. The script will then run in the background and automatically copy the images. A desktop notification will inform you about the progress.
 
-Normally, the camera is available at 192.168.122.1:64321, but you can adjust this by the `--address` and `--port` parameter.
+## Reverse Engineering
+The camera shows which web services it offers in `http://192.168.122.1:64321/DmsDescPush.xml`. This for example leads to `http://192.168.122.1:64321/XPlsDesc.xml`, showing which commands it understands for transfer control. While the commands TransferStart and TransferEnd are working, TransferProgress does nothing on my camera.
 
-By default, the images will be downloaded into your personal images folder. You can adjust this using the `--output-dir` directory.
-
+## Tests
 Tested with Sony ILCA-77M2, firmware version 2.0. Feedback, stars and contributions welcome! Please tell me if your camera is working too.
