@@ -22,4 +22,10 @@ No special installation steps are necessary. Just:
 The camera shows which web services it offers in `http://192.168.122.1:64321/DmsDescPush.xml`. This for example leads to `http://192.168.122.1:64321/XPlsDesc.xml`, showing which commands it understands for transfer control. While the commands TransferStart and TransferEnd are working, TransferProgress does nothing on my camera.
 
 ## Tests
-Tested with Sony ILCA-77M2, firmware version 2.0. Feedback, stars and contributions welcome! Please tell me if your camera is working too.
+Feedback, stars and contributions welcome! Please tell me if your camera is working too.
+
+|       Model       | Working? |
+| ----------------- | -------- |
+| ILCA-77M2 (v2.00) | Yes      |
+| ICLE-7S           | Yes      |
+| DSC-RX100-M3      | Yes      |
