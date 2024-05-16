@@ -12,7 +12,9 @@ try:
     import gi; gi.require_version('Notify', '0.7')
     from gi.repository import Notify
     Notify.init('ImagingEdge4Linux')
-except Exception: pass
+except Exception as e:
+    print('Note: no support for desktop notifications available:', e)
+    Notify = None
 
 __author__    = 'Georg Sieber'
 __copyright__ = '(c) 2024'
@@ -45,8 +47,9 @@ class ImagingEdge:
         else:
             self.transferStarted = True
 
-        # display "sync started" desktop notification
-        if(self.notify):
+        # display "sync started" desktop notification if notification module is available
+        self.notification = None
+        if(self.notify and Notify):
             self.notification = Notify.Notification.new('ImagingEdge4Linux', 'Sync running...')
             self.notification.show()
 
