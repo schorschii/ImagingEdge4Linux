@@ -2,11 +2,18 @@
 
 from xml.dom import minidom
 from urllib.parse import urlparse, unquote
-from gi.repository import GLib
 import os, sys
 import requests
 import argparse
 import time
+
+try:
+    from gi.repository import GLib
+    PICTURES_DIR = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES)
+except Exception as e:
+    print('Note: no GLib module available to get user\'s picture folder path. Using English folder name "Pictures".')
+    from pathlib import Path
+    PICTURES_DIR = str(Path.home()) + '/Pictures'
 
 try:
     import gi; gi.require_version('Notify', '0.7')
@@ -210,7 +217,7 @@ class ImagingEdge:
                 print('!! Bytes received do not match advertised content-length:', written, '<>', length)
 
 def main():
-    defaultImgDir = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES) + '/ImagingEdge4Linux'
+    defaultImgDir = PICTURES_DIR + '/ImagingEdge4Linux'
 
     parser = argparse.ArgumentParser(epilog=__copyright__+' '+__author__+' - https://georg-sieber.de')
     parser.add_argument('-a', '--address', default=ImagingEdge.DEFAULT_IP, help='IP address of your camera')

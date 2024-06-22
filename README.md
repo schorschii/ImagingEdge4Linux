@@ -8,9 +8,10 @@ I wasn't very amused about that - ImagingEdge4Linux was born.
 ## Introduction
 This project tries to reverse engineer and implement the SOAP API (XML over HTTP) offered by Sony DSLR cameras for image download to mobile devices using the app "Imaging Edge Mobile" (camera menu "Send to Smartphone"). In contrast to the PTP/IP implementation (camera menu "Send to computer"), which is already reverse-engineered in [sony-pm-alt](https://github.com/falk0069/sony-pm-alt), the SOAP API seems to be less complex to set up (no PTP-GUID etc.) and easier to use.
 
-## Usage
-No special installation steps are necessary. Just:
+## Installation
+Make sure you have the `python3-gi` package installed in your Linux distribution, e.g. via `apt install python3-gi`.
 
+## Usage
 1. Select "Send to Smartphone" in the menu of your Sony camera (**not** "Send to Computer")
 2. Connect your computer to the WiFi access point of the camera
 3. Execute the python script: `python3 imaging-edge.py`. All images will be copied to your computer. Already copied files will be skipped.
