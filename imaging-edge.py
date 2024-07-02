@@ -115,7 +115,7 @@ class ImagingEdge:
             print('Transfer end response:', response.status_code, response.text)
 
     # get dir contents
-    def getDirectoryContent(self, dir, dirname):
+    def getDirectoryContent(self, dir, dirname, downloadSize=None):
         response = requests.post(
             'http://'+self.address+':'+self.port+'/upnp/control/ContentDirectory',
             headers = {
@@ -154,7 +154,7 @@ class ImagingEdge:
             for element2 in dom2.getElementsByTagName('container'):
                 dirname = element2.getElementsByTagName('dc:title')[0].firstChild.nodeValue
                 print('Entering subdir:', element2.attributes['id'].value, '-', dirname)
-                self.getDirectoryContent(element2.attributes['id'].value, dirname)
+                self.getDirectoryContent(element2.attributes['id'].value, dirname, downloadSize)
 
             # yay, an image (item)
             for element2 in dom2.getElementsByTagName('item'):
@@ -162,22 +162,38 @@ class ImagingEdge:
                 filename = element2.getElementsByTagName('dc:title')[0].firstChild.nodeValue
                 filepath = self.output_dir+'/'+dirname+'/'+filename
                 # find the best resolution of this item
-                lastSize = 0; lastResolution = 0; url = None
-                for element3 in element2.getElementsByTagName('res'):
-                    size = 0; resolution = 0
-                    if('size' in element3.attributes):
-                        size = int(element3.attributes['size'].value)
-                    if('resolution' in element3.attributes):
-                        resolution = element3.attributes['resolution'].value
-                    if(size > lastSize):
-                        url = element3.firstChild.nodeValue
-                        lastSize = size
-                        lastResolution = resolution
+                url = None
+                elements3 = element2.getElementsByTagName('res')
+                if(not downloadSize):
+                    lastSize = 0; lastResolution = 0
+                    for element3 in elements3:
+                        size = 0; resolution = 0
+                        if('size' in element3.attributes):
+                            size = int(element3.attributes['size'].value)
+                        if('resolution' in element3.attributes):
+                            resolution = element3.attributes['resolution'].value
+                        if(size > lastSize):
+                            url = element3.firstChild.nodeValue
+                            lastSize = size
+                            lastResolution = resolution
+                # fallback 1: no item found with size property set, probably a RAW file, search for largest thumbnail
+                if(not url):
+                    searchSize = '_LRG'
+                    if(downloadSize): searchSize = downloadSize
+                    for element3 in elements3:
+                        if('protocolInfo' in element3.attributes
+                        and searchSize in element3.attributes['protocolInfo'].value):
+                            url = element3.firstChild.nodeValue
+                            break
+                # fallback 2: use last <resolution> as this is most likely the best quality
+                if(not url):
+                    if(len(elements3) > 0 and elements3[-1].firstChild.nodeValue):
+                        url = elements3[-1].firstChild.nodeValue
                 # download the best resolution
                 if(url):
                     self.downloadFile(url, filepath)
                 else:
-                    print('Unable to find a download candidate!')
+                    print('Unable to find a download candidate:', filename)
 
         self.endTransfer()
         self.endTransferNotification()
@@ -223,6 +239,7 @@ def main():
     parser.add_argument('-a', '--address', default=ImagingEdge.DEFAULT_IP, help='IP address of your camera')
     parser.add_argument('-p', '--port', default=ImagingEdge.DEFAULT_PORT, help='Port of your camera')
     parser.add_argument('-o', '--output-dir', default=defaultImgDir, help='Directory where to save the downloaded files')
+    parser.add_argument('-s', '--download-size', default=None, help='Download a specific thumbnail size (LRG|SM|TN) - none for best/original quality')
     parser.add_argument('-d', '--daemon', action='store_true', help='Run in background and automatically copy images if camera is available')
     parser.add_argument('--debug', default=False, action='store_true', help='Show debug output')
     parser.add_argument('--version', action='store_true', help='Print version and exit')
@@ -240,10 +257,10 @@ def main():
         try:
             try:
                 # user selected "Choose images on camera"
-                ie.getDirectoryContent(ie.ROOT_DIR_PUSH, ie.ROOT_DIR_PUSH)
+                ie.getDirectoryContent(ie.ROOT_DIR_PUSH, ie.ROOT_DIR_PUSH, args.download_size)
             except GetContentException as e:
                 # user selected "Choose images on computer" (= access to all images)
-                ie.getDirectoryContent(ie.ROOT_DIR_PULL, ie.ROOT_DIR_PULL)
+                ie.getDirectoryContent(ie.ROOT_DIR_PULL, ie.ROOT_DIR_PULL, args.download_size)
         except requests.exceptions.ConnectionError as e:
             # ignore connection errors so that deamon mode keeps running
             print(e)

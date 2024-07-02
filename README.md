@@ -19,6 +19,8 @@ Make sure you have the `python3-gi` package installed in your Linux distribution
    - By default, the images will be downloaded into your personal images folder. You can adjust this using the `--output-dir` directory.
    - You can add this script to your autostart with the `--daemon` parameter. The script will then run in the background and automatically copy the images. A desktop notification will inform you about the progress.
 
+The script downloads the best available quality automatically, which is the original, unmodified image in case of JPEG. Note that the API does not allow to download RAW files. Instead of the RAW file, a compressed JPEG will be downloaded.
+
 ## Reverse Engineering
 The camera shows which web services it offers in `http://192.168.122.1:64321/DmsDescPush.xml`. This for example leads to `http://192.168.122.1:64321/XPlsDesc.xml`, showing which commands it understands for transfer control. While the commands TransferStart and TransferEnd are working, TransferProgress does nothing on my camera.
 
