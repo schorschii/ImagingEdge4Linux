@@ -34,3 +34,4 @@ Feedback, stars and contributions welcome! Please tell me if your camera is work
 | ILCA-77M2 (v2.00) | Yes      |
 | ILCE-7S           | Yes      |
 | DSC-RX100-M3      | Yes      |
+| DSC-RX100-M7      | Yes      |
