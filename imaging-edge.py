@@ -24,14 +24,14 @@ except Exception as e:
     Notify = None
 
 __author__    = 'Georg Sieber'
-__copyright__ = '(c) 2024'
+__copyright__ = '(c) 2024-2025'
 
 
 class GetContentException(Exception):
     pass
 
 class ImagingEdge:
-    VERSION = '0.1'
+    VERSION = '0.2'
 
     ROOT_DIR_PUSH = 'PushRoot'
     ROOT_DIR_PULL = 'PhotoRoot'
@@ -115,7 +115,7 @@ class ImagingEdge:
             print('Transfer end response:', response.status_code, response.text)
 
     # get dir contents
-    def getDirectoryContent(self, dir, dirname, downloadSize=None):
+    def getDirectoryContent(self, dir, dirname, downloadSize=None, startingIndex=0):
         response = requests.post(
             'http://'+self.address+':'+self.port+'/upnp/control/ContentDirectory',
             headers = {
@@ -129,7 +129,7 @@ class ImagingEdge:
                 +'<ObjectID>'+dir+'</ObjectID>'
                 +'<BrowseFlag>BrowseDirectChildren</BrowseFlag>'
                 +'<Filter>*</Filter>'
-                +'<StartingIndex>0</StartingIndex>'
+                +'<StartingIndex>'+str(startingIndex)+'</StartingIndex>'
                 +'<RequestedCount>9999</RequestedCount>'
                 +'<SortCriteria></SortCriteria>'
                 +'</u:Browse>'
@@ -140,8 +140,6 @@ class ImagingEdge:
             print('Dir content response:', response.status_code, response.text)
         if(response.status_code != 200):
             raise GetContentException('Failed to get dir content:', dir)
-
-        self.startTransfer()
 
         dom = minidom.parseString(response.text)
         for element in dom.getElementsByTagName('Result'):
@@ -195,8 +193,10 @@ class ImagingEdge:
                 else:
                     print('Unable to find a download candidate:', filename)
 
-        self.endTransfer()
-        self.endTransferNotification()
+        numberReturned = int(dom.getElementsByTagName('NumberReturned')[0].firstChild.nodeValue)
+        totalMatches = int(dom.getElementsByTagName('TotalMatches')[0].firstChild.nodeValue)
+        if(startingIndex+numberReturned < totalMatches):
+            self.getDirectoryContent(dir, dirname, downloadSize, startingIndex+numberReturned)
 
     def downloadFile(self, url, filepath=None):
         # fallback file name
@@ -255,12 +255,15 @@ def main():
 
     while True:
         try:
+            ie.startTransfer()
             try:
                 # user selected "Choose images on camera"
                 ie.getDirectoryContent(ie.ROOT_DIR_PUSH, ie.ROOT_DIR_PUSH, args.download_size)
             except GetContentException as e:
                 # user selected "Choose images on computer" (= access to all images)
                 ie.getDirectoryContent(ie.ROOT_DIR_PULL, ie.ROOT_DIR_PULL, args.download_size)
+            ie.endTransfer()
+            ie.endTransferNotification()
         except requests.exceptions.ConnectionError as e:
             # ignore connection errors so that deamon mode keeps running
             print(e)
