@@ -36,6 +36,7 @@ Feedback, stars and contributions welcome! Please tell me if your camera is work
 | ILCE-6400         | Yes      |
 | ILCE-6600         | Yes      |
 | DSC-HX90V         | Yes      |
+| DSC-HX99          | Yes      |
 | DSC-RX100-M3      | Yes      |
 | DSC-RX100-M7      | Yes      |
 | DSC-WX300         | Yes      |
