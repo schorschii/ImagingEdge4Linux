@@ -106,6 +106,9 @@ class ImagingEdge:
 
     # get dir contents
     def getDirectoryContent(self, dir, dirname):
+      done=0
+      offset=0
+      while not done:
         response = requests.post(
             'http://'+self.address+':'+self.port+'/upnp/control/ContentDirectory',
             headers = {
@@ -119,7 +122,7 @@ class ImagingEdge:
                 +'<ObjectID>'+dir+'</ObjectID>'
                 +'<BrowseFlag>BrowseDirectChildren</BrowseFlag>'
                 +'<Filter>*</Filter>'
-                +'<StartingIndex>0</StartingIndex>'
+                +'<StartingIndex>'+str(offset)+'</StartingIndex>'
                 +'<RequestedCount>9999</RequestedCount>'
                 +'<SortCriteria></SortCriteria>'
                 +'</u:Browse>'
@@ -134,6 +137,18 @@ class ImagingEdge:
         self.startTransfer()
 
         dom = minidom.parseString(response.text)
+        number_returned = int(dom.getElementsByTagName('NumberReturned')[0].firstChild.nodeValue)
+        total_matches = int(dom.getElementsByTagName('TotalMatches')[0].firstChild.nodeValue)
+        if (self.debug):
+            print('offset:', offset)
+            print('NumberReturned:', number_returned)
+            print('TotalMatches:', total_matches)
+
+        if number_returned == 0 or offset + number_returned >= total_matches:
+            done=1
+        else:
+            offset += number_returned
+
         for element in dom.getElementsByTagName('Result'):
             # yes, no joke: there is a XML string encoded inside the <Result>, so we need to parse a second time
             if(self.debug):
