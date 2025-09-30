@@ -38,6 +38,7 @@ Feedback, stars and contributions welcome! Please tell me if your camera is work
 | DSC-HX90V         | Yes      |
 | DSC-HX99          | Yes      |
 | DSC-RX100-M3      | Yes      |
+| DSC-RX100-M6      | Yes      |
 | DSC-RX100-M7      | Yes      |
 | DSC-WX300         | Yes      |
 | RX10 IV           | Yes      |
