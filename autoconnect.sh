@@ -15,7 +15,7 @@ nmcli dev wifi connect "$SSID" password "$PASSWORD"
 # Wait for a few seconds to ensure the connection is established
 sleep 6
 
-python3 imaging-edge.py
+uv run imaging-edge.py
 
 if [ -n "$CURRENT_SSID" ]; then
 	echo "Reconnecting to the previously connected network..."

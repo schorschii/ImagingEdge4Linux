@@ -14,7 +14,7 @@ Make sure you have the `python3-gi` package installed in your Linux distribution
 ## Usage
 1. Select "Send to Smartphone" in the menu of your Sony camera (**not** "Send to Computer")
 2. Connect your computer to the WiFi access point of the camera
-3. Execute the python script: `python3 imaging-edge.py`. All images will be copied to your computer. Already copied files will be skipped.
+3. Execute the python script: `uv run imaging-edge.py`. All images will be copied to your computer. Already copied files will be skipped.
    - Normally, the camera is available at 192.168.122.1:64321, but you can adjust this by the `--address` and `--port` parameter.
    - By default, the images will be downloaded into your personal images folder. You can adjust this using the `--output-dir` directory.
    - You can add this script to your autostart with the `--daemon` parameter. The script will then run in the background and automatically copy the images. A desktop notification will inform you about the progress.
