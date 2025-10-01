@@ -35,7 +35,11 @@ sleep 6
 
 # Run the imaging edge script
 echo "Running imaging-edge.py..."
-uv run imaging-edge.py
+if command -v uv >/dev/null 2>&1; then
+	uv run imaging-edge.py
+else
+	python3 imaging-edge.py
+fi
 
 # Reconnect to previous network if there was one
 if [ -n "$CURRENT_SSID" ]; then
