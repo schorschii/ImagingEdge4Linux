@@ -10,7 +10,7 @@ import time
 try:
     from gi.repository import GLib
     PICTURES_DIR = GLib.get_user_special_dir(GLib.UserDirectory.DIRECTORY_PICTURES)
-except Exception as e:
+except Exception:
     print('Note: no GLib module available to get user\'s picture folder path. Using English folder name "Pictures".')
     from pathlib import Path
     PICTURES_DIR = str(Path.home()) + '/Pictures'
@@ -19,8 +19,8 @@ try:
     import gi; gi.require_version('Notify', '0.7')
     from gi.repository import Notify
     Notify.init('ImagingEdge4Linux')
-except Exception as e:
-    print('Note: no support for desktop notifications available:', e)
+except Exception:
+    print('Note: no support for desktop notifications available. Continuing without notifications.')
     Notify = None
 
 __author__    = 'Georg Sieber'

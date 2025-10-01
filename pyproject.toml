@@ -1,0 +1,12 @@
+[project]
+name = "imagingedge4linux"
+version = "0.1.0"
+description = "Sony camera image downloader for Linux"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.32.5",
+]
+
+[project.optional-dependencies]
+notifications = ["pygobject>=3.54.2"]
