@@ -29,17 +29,18 @@ The camera shows which web services it offers in `http://192.168.122.1:64321/Dms
 ## Tests
 Feedback, stars and contributions welcome! Please tell me if your camera is working too.
 
-|       Model       | Working? |
-| ----------------- | -------- |
-| ILCA-77M2 (v2.00) | Yes      |
-| ILCE-7S           | Yes      |
-| ILCE-6000         | Yes      |
-| ILCE-6400         | Yes      |
-| ILCE-6600         | Yes      |
-| DSC-HX90V         | Yes      |
-| DSC-HX99          | Yes      |
-| DSC-RX100-M3      | Yes      |
-| DSC-RX100-M6      | Yes      |
-| DSC-RX100-M7      | Yes      |
-| DSC-WX300         | Yes      |
-| RX10 IV           | Yes      |
+|       Model       | Working?               |
+| ----------------- | ---------------------- |
+| ILCA-77M2 (v2.00) | Yes                    |
+| ILCE-7S           | Yes                    |
+| ILCE-6000         | Yes                    |
+| ILCE-6400         | Yes                    |
+| ILCE-6600         | Yes                    |
+| DSC-HX90V         | Yes                    |
+| DSC-HX99          | Yes                    |
+| DSC-RX100-M3      | Yes                    |
+| DSC-RX100-M6      | Yes                    |
+| DSC-RX100-M7      | Yes                    |
+| DSC-WX300         | Yes                    |
+| DSC-WX350         | Yes (address 10.0.0.1) |
+| RX10 IV           | Yes                    |
